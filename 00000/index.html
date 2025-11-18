@@ -1,1 +1,1431 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>نظام الكافيه - كاشير / ويتر / مطبخ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      color: #e5e7eb;
+      /* خلفية بصورة الكافيه مع تغميق علشان العناصر تبقى واضحة */
+      background:
+        linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.92)),
+        url("cafe-bg.jpg") center center / cover fixed no-repeat;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1f2937cc, #111827ee);
+      padding: 16px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(10px);
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    header h1 span.logo-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 12px #22c55e;
+    }
+    .sub-title {
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+
+    /* جزء بيانات التواصل في الهيدر (اختياري) */
+    .contact-header {
+      font-size: 0.8rem;
+      color: #d1d5db;
+      text-align: left;
+    }
+    .contact-header a {
+      color: #38bdf8;
+      text-decoration: none;
+    }
+    .contact-header a:hover {
+      text-decoration: underline;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    nav button {
+      border-radius: 999px;
+      border: 1px solid #334155;
+      background: #020617dd;
+      color: #e5e7eb;
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s, transform 0.1s, box-shadow 0.2s, border-color 0.2s;
+    }
+    nav button span.badge {
+      background: #22c55e1a;
+      color: #22c55e;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 0.7rem;
+    }
+    nav button.active {
+      background: #22c55e;
+      color: #020617;
+      border-color: #22c55e;
+      box-shadow: 0 10px 25px rgba(34,197,94,0.3);
+    }
+    nav button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(15,23,42,0.6);
+    }
+
+    main {
+      padding: 16px;
+      max-width: 1200px;
+      margin: 0 auto 40px auto;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+    .card {
+      background: radial-gradient(circle at top left, #1e293bcc, #020617ee);
+      border-radius: 18px;
+      padding: 16px;
+      border: 1px solid #1f2937;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.45);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -30%;
+      opacity: 0.05;
+      background: radial-gradient(circle at top, #22c55e 0, transparent 50%);
+      pointer-events: none;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 10px;
+    }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .card-title span.dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 10px #22c55e;
+    }
+    .pill {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      border-radius: 999px;
+      border: 1px solid #1f2937;
+      padding: 4px 9px;
+      background: #020617aa;
+    }
+    label {
+      display: block;
+      font-size: 0.8rem;
+      color: #9ca3af;
+      margin-bottom: 4px;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid #1e293b;
+      background: #020617dd;
+      color: #e5e7eb;
+      font-size: 0.85rem;
+      outline: none;
+    }
+    input:focus, select:focus {
+      border-color: #22c55e;
+      box-shadow: 0 0 0 1px rgba(34,197,94,0.3);
+    }
+    .input-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .input-row > div {
+      flex: 1;
+      min-width: 120px;
+    }
+    button.primary {
+      border-radius: 999px;
+      border: none;
+      padding: 9px 18px;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #020617;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 12px 30px rgba(34,197,94,0.4);
+      transition: transform 0.1s, box-shadow 0.1s, filter 0.1s;
+    }
+    button.primary:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+    }
+    button.primary:active {
+      transform: translateY(0);
+      box-shadow: 0 6px 16px rgba(34,197,94,0.4);
+    }
+    button.secondary {
+      border-radius: 999px;
+      border: 1px solid #334155;
+      padding: 7px 14px;
+      background: #020617dd;
+      color: #e5e7eb;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.1s, border-color 0.1s, transform 0.1s;
+    }
+    button.secondary:hover {
+      background: #111827;
+      border-color: #475569;
+    }
+    button.small {
+      padding: 4px 9px;
+      font-size: 0.75rem;
+      border-radius: 999px;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 0.75rem;
+      border: 1px solid #1f2937;
+      background: #020617bb;
+      color: #9ca3af;
+    }
+    .chip.success {
+      border-color: #22c55e55;
+      color: #bbf7d0;
+      background: #022c2255;
+    }
+    .chip.warning {
+      border-color: #eab30855;
+      color: #fef3c7;
+      background: #42200655;
+    }
+    .chip.danger {
+      border-color: #ef444455;
+      color: #fecaca;
+      background: #450a0a55;
+    }
+    .chip.neutral {
+      border-color: #4b5563;
+      color: #e5e7eb;
+      background: #020617aa;
+    }
+    .scroll-area {
+      max-height: 420px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+    th, td {
+      padding: 6px 4px;
+      border-bottom: 1px solid #111827;
+      text-align: right;
+    }
+    th {
+      position: sticky;
+      top: 0;
+      background: #020617ee;
+      z-index: 5;
+    }
+    tr:nth-child(even) td {
+      background: #020617aa;
+    }
+    tr:hover td {
+      background: #111827;
+    }
+    .text-muted {
+      color: #9ca3af;
+      font-size: 0.8rem;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      display: inline-block;
+    }
+    .status-new { background: #fbbf24; }
+    .status-progress { background: #22c55e; }
+    .status-done { background: #38bdf8; }
+    .status-paid { background: #22c55e; }
+    .status-unpaid { background: #ef4444; }
+    .tag {
+      border-radius: 999px;
+      border: 1px solid #374151;
+      padding: 3px 8px;
+      font-size: 0.75rem;
+      color: #9ca3af;
+      background: #020617dd;
+    }
+    .section {
+      display: none;
+      animation: fadeIn 0.25s ease-out;
+    }
+    .section.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .toast {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #022c22;
+      color: #bbf7d0;
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-size: 0.8rem;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid #22c55e55;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+      z-index: 100;
+    }
+    .toast.show {
+      display: inline-flex;
+      animation: slideUp 0.2s ease-out;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translate(-50%, 10px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
+    }
+    .badge-pill {
+      border-radius: 999px;
+      padding: 2px 6px;
+      font-size: 0.7rem;
+      border: 1px solid #1f2937;
+      color: #9ca3af;
+    }
+
+    /* Footer للتواصل */
+    .contact-footer {
+      max-width: 1200px;
+      margin: 0 auto 20px auto;
+      padding: 12px 16px;
+      border-radius: 18px;
+      background: #020617ee;
+      border: 1px solid #1f2937;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      font-size: 0.85rem;
+      text-align: center;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+    .contact-footer a {
+      color: #38bdf8;
+      text-decoration: none;
+    }
+    .contact-footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>
+        <span class="logo-dot"></span>
+        نظام الكافيه
+      </h1>
+      <div class="sub-title">
+        Waiter → Orders → Kitchen → Cashier · يحفظ البيانات في LocalStorage
+      </div>
+    </div>
+
+    <div class="contact-header">
+      <div>📞 01062166310</div>
+      <div>📷 إنستجرام:
+        <a href="https://instagram.com/portogal_0" target="_blank">@portogal_0</a>
+      </div>
+    </div>
+
+    <nav>
+      <button class="active" data-section="waiter-section">الويتر <span class="badge">إنشاء طلب</span></button>
+      <button data-section="orders-section">الطلبات</button>
+      <button data-section="kitchen-section">المطبخ</button>
+      <button data-section="cashier-section">الكاشير</button>
+      <button data-section="menu-section">المينيو</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- SECTION: WAITER -->
+    <section id="waiter-section" class="section active">
+      <div class="grid">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span class="dot"></span>
+              طلب جديد - الويتر
+            </div>
+            <span class="pill">اختر الأصناف واضغط "إرسال الطلب"</span>
+          </div>
+
+          <div class="input-row" style="margin-bottom: 10px;">
+            <div>
+              <label>رقم الترابيزة / اسم العميل</label>
+              <input id="order-table" type="text" placeholder="مثال: T5 أو أحمد" />
+            </div>
+            <div>
+              <label>ملاحظات على الطلب</label>
+              <input id="order-notes" type="text" placeholder="بدون سكر / extra shot ..." />
+            </div>
+          </div>
+
+          <div class="input-row" style="margin-bottom: 10px;">
+            <div>
+              <label>تصفية حسب النوع</label>
+              <select id="waiter-category-filter">
+                <option value="">كل الأنواع</option>
+              </select>
+            </div>
+            <div>
+              <label>بحث في المينيو</label>
+              <input id="waiter-search" type="search" placeholder="اكتب اسم مشروب أو جزء من الاسم..." />
+            </div>
+          </div>
+
+          <div class="scroll-area" id="waiter-menu-list"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span class="dot"></span>
+              تفاصيل الطلب الحالي
+            </div>
+            <span class="pill">
+              <span id="current-order-count">0</span> صنف ·
+              الإجمالي: <span id="current-order-total">0</span> ج
+            </span>
+          </div>
+          <div class="scroll-area">
+            <table>
+              <thead>
+                <tr>
+                  <th>الصنف</th>
+                  <th>سعر</th>
+                  <th>كمية</th>
+                  <th>الإجمالي</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="current-order-items">
+                <tr>
+                  <td colspan="5" style="text-align:center;" class="text-muted">
+                    لا يوجد أصناف في الطلب بعد
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="margin-top: 10px; display:flex; justify-content: space-between; align-items:center; gap: 8px; flex-wrap: wrap;">
+            <button class="secondary small" id="clear-current-order">مسح الطلب الحالي</button>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap: wrap;">
+              <span class="text-muted">الحالة عند الإرسال: <span class="chip warning">جديد - في انتظار المطبخ</span></span>
+              <button class="primary" id="submit-order">
+                إرسال الطلب إلى المطبخ
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: ORDERS OVERVIEW -->
+    <section id="orders-section" class="section">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="dot"></span>
+            كل الطلبات
+          </div>
+          <span class="pill">للمتابعة العامة · الحالة / الإجمالي</span>
+        </div>
+        <div class="input-row" style="margin-bottom: 10px;">
+          <div>
+            <label>تصفية حسب الحالة</label>
+            <select id="orders-status-filter">
+              <option value="">الجميع</option>
+              <option value="pending">جديد</option>
+              <option value="in-progress">قيد التحضير</option>
+              <option value="done">جاهز</option>
+              <option value="paid">مدفوع</option>
+            </select>
+          </div>
+          <div>
+            <label>بحث برقم الطلب / الترابيزة</label>
+            <input id="orders-search" type="search" placeholder="مثال: #102 أو T5 أو أحمد" />
+          </div>
+        </div>
+        <div class="scroll-area">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>الترابيزة</th>
+                <th>عدد الأصناف</th>
+                <th>الإجمالي</th>
+                <th>حالة المطبخ</th>
+                <th>حالة الدفع</th>
+                <th>وقت الإنشاء</th>
+              </tr>
+            </thead>
+            <tbody id="orders-list"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: KITCHEN -->
+    <section id="kitchen-section" class="section">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="dot"></span>
+            شاشة المطبخ
+          </div>
+          <span class="pill">يظهر الطلبات الجديدة و"قيد التحضير"</span>
+        </div>
+        <div class="scroll-area">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>الترابيزة</th>
+                <th>الأصناف</th>
+                <th>ملاحظات</th>
+                <th>الحالة</th>
+                <th>إجراء</th>
+              </tr>
+            </thead>
+            <tbody id="kitchen-orders-list"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: CASHIER -->
+    <section id="cashier-section" class="section">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="dot"></span>
+            شاشة الكاشير
+          </div>
+          <span class="pill">حساب الإجمالي + تحديد الطلبات المدفوعة + طباعة فاتورة</span>
+        </div>
+        <div class="input-row" style="margin-bottom: 10px;">
+          <div>
+            <label>فلترة</label>
+            <select id="cashier-filter">
+              <option value="">كل الطلبات</option>
+              <option value="unpaid">غير مدفوع</option>
+              <option value="paid">مدفوع</option>
+            </select>
+          </div>
+          <div>
+            <label>إجمالي اليوم (كل المدفوع)</label>
+            <div class="chip success">
+              <span>المجموع:</span>
+              <span id="cashier-total-paid">0</span>
+              <span>ج</span>
+            </div>
+          </div>
+        </div>
+        <div class="scroll-area">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>الترابيزة</th>
+                <th>الإجمالي</th>
+                <th>حالة الدفع</th>
+                <th>وقت الإنشاء</th>
+                <th>إجراء</th>
+              </tr>
+            </thead>
+            <tbody id="cashier-orders-list"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: MENU -->
+    <section id="menu-section" class="section">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="dot"></span>
+            المينيو الكامل
+          </div>
+          <span class="pill">من الـ SQL اللي انت بعتته · محفوظ في LocalStorage</span>
+        </div>
+        <div class="input-row" style="margin-bottom: 10px;">
+          <div>
+            <label>تصفية حسب النوع</label>
+            <select id="menu-category-filter">
+              <option value="">كل الأنواع</option>
+            </select>
+          </div>
+          <div>
+            <label>بحث في المينيو</label>
+            <input id="menu-search" type="search" placeholder="مثال: لاتيه / وافل / آيس تي ..." />
+          </div>
+        </div>
+        <div class="scroll-area">
+          <table>
+            <thead>
+              <tr>
+                <th>الصنف</th>
+                <th>النوع</th>
+                <th>السعر (ج)</th>
+              </tr>
+            </thead>
+            <tbody id="menu-list"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="contact-footer">
+    <span>📞 للتواصل: <strong>01062166310</strong></span>
+    <span>•</span>
+    <span>📷 إنستجرام:
+      <a href="https://instagram.com/portogal_0" target="_blank">@portogal_0</a>
+    </span>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const STORAGE_KEYS = {
+      MENU: "cafe_menu_items",
+      ORDERS: "cafe_orders"
+    };
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2200);
+    }
+
+    function seedMenuFromSqlIfNeeded() {
+      const existing = localStorage.getItem(STORAGE_KEYS.MENU);
+      if (existing) {
+        try {
+          return JSON.parse(existing);
+        } catch {
+          localStorage.removeItem(STORAGE_KEYS.MENU);
+        }
+      }
+
+      const sqlSeed = `DELETE FROM items;
+
+INSERT INTO items (name, category, price) VALUES
+-- قهوة
+('إسبرسو', 'قهوة', 60),
+('دبل إسبرسو', 'قهوة', 90),
+('ريستريتو', 'قهوة', 70),
+('لونجو', 'قهوة', 65),
+('أمريكانو', 'قهوة', 55),
+('كولد برو (ميديوم)', 'قهوة', 95),
+('كولد برو (لاارج)', 'قهوة', 120),
+('فرابتشينو', 'قهوة', 110),
+('سبانش لاتيه', 'قهوة', 80),
+('لاتيه (صغير)', 'قهوة', 55),
+('لاتيه (وسط)', 'قهوة', 65),
+('لاتيه (كبير)', 'قهوة', 75),
+('فلات وايت', 'قهوة', 65),
+('كابتشينو (صغير)', 'قهوة', 55),
+('كابتشينو (وسط)', 'قهوة', 65),
+('كابتشينو (كبير)', 'قهوة', 75),
+('موكا (صغير)', 'قهوة', 60),
+('موكا (وسط)', 'قهوة', 70),
+('موكا (كبير)', 'قهوة', 80),
+('أفوغاتو', 'قهوة', 85),
+('ماكياتو كلاسيك', 'قهوة', 70),
+('ماكياتو كراميل', 'قهوة', 75),
+('هات شوك لاتيه', 'قهوة', 75),
+('فانيلا لاتيه', 'قهوة', 75),
+('هازلنات لاتيه', 'قهوة', 75),
+('نوتيلا لاتيه', 'قهوة', 90),
+('قهوة تركي', 'قهوة', 40),
+('إسبريسو مكياتو', 'قهوة', 75),
+('قهوة مثلجة (فلات وايت آيس)', 'قهوة', 80),
+
+-- شاي
+('شاي بلبن (صغير)', 'شاي', 35),
+('شاي بلبن (وسط)', 'شاي', 40),
+('شاي بلبن (كبير)', 'شاي', 45),
+('شاي أخضر', 'شاي', 35),
+('شاي أحمر', 'شاي', 30),
+('إيرل جراي', 'شاي', 45),
+('شاي بالنعناع', 'شاي', 35),
+('شاي زنجبيل', 'شاي', 38),
+
+-- ايس كوفي
+('آيس كوفي (كاراميل)', 'ايس كوفي', 130),
+('آيس كوفي (موكا)', 'ايس كوفي', 135),
+('آيس فرابتشينو', 'ايس كوفي', 150),
+('آيس أفوغاتو', 'ايس كوفي', 140),
+('آيس كولد برو', 'ايس كوفي', 140),
+('سبانيش آيس كوفي', 'ايس كوفي', 145),
+('آيس لاتيه', 'ايس كوفي', 120),
+('آيس موكا (كبير)', 'ايس كوفي', 160),
+
+-- عصائر
+('موز (صغير)', 'عصائر', 40),
+('موز (وسط)', 'عصائر', 50),
+('فراولة', 'عصائر', 50),
+('برتقال', 'عصائر', 50),
+('مانجو', 'عصائر', 50),
+('كيوي', 'عصائر', 100),
+('أفوكادو', 'عصائر', 70),
+('جوافة', 'عصائر', 60),
+('رمان', 'عصائر', 80),
+('أناناس', 'عصائر', 60),
+('ليمون بالنعناع', 'عصائر', 45),
+('بطيخ', 'عصائر', 55),
+('توت مشكل', 'عصائر', 70),
+('تفاح', 'عصائر', 50),
+('مكس عصائر (اختيارك)', 'عصائر', 90),
+('عصير بروتين', 'عصائر', 110),
+
+-- مشروبات ساخنة
+('يانسون', 'مشروبات ساخنة', 35),
+('حلبة', 'مشروبات ساخنة', 35),
+('قرفة', 'مشروبات ساخنة', 35),
+('سحلب', 'مشروبات ساخنة', 35),
+('سحلب بالمكسرات', 'مشروبات ساخنة', 45),
+('زنجبيل', 'مشروبات ساخنة', 35),
+('كركديه ساخن', 'مشروبات ساخنة', 35),
+('كركديه بارد', 'مشروبات ساخنة', 35),
+('هوت شوكليت', 'مشروبات ساخنة', 60),
+('موكاتشينو ساخن', 'مشروبات ساخنة', 70),
+('حليب دافئ', 'مشروبات ساخنة', 30),
+
+-- وافل
+('وايت شوكولاتة', 'وافل', 100),
+('دارك شوكولاتة', 'وافل', 100),
+('موز', 'وافل', 100),
+('أوريو', 'وافل', 100),
+('فواكه', 'وافل', 100),
+('بسكوف', 'وافل', 100),
+('فستق', 'وافل', 120),
+('نصفين حسب اختيارك', 'وافل', 110),
+('ريد فيلفت', 'وافل', 130),
+('نيوتلا وافر', 'وافل', 140),
+('سنيكرز وافر', 'وافل', 140),
+('كيت كات وافر', 'وافل', 140),
+('كراميل بانانا', 'وافل', 130),
+('عسل ومكسرات', 'وافل', 120),
+('بلجيان كلاسيك', 'وافل', 110),
+('وافل تشيز كيك', 'وافل', 150),
+
+-- آيس كريم
+('موز', 'آيس كريم', 15),
+('فراولة', 'آيس كريم', 15),
+('برتقال', 'آيس كريم', 15),
+('مانجو', 'آيس كريم', 15),
+('كيوي', 'آيس كريم', 15),
+('٣ بولات (اختيارك)', 'آيس كريم', 45),
+('سوربيه ليمون', 'آيس كريم', 25),
+
+-- ميلك شيك
+('ميلك شيك فانيلا', 'ميلك شيك', 65),
+('ميلك شيك شوكولاتة', 'ميلك شيك', 65),
+('ميلك شيك فراولة', 'ميلك شيك', 65),
+('ميلك شيك موز', 'ميلك شيك', 65),
+('ميلك شيك اوريو', 'ميلك شيك', 70),
+('ميلك شيك بسكوف', 'ميلك شيك', 80),
+('ميلك شيك كاراميل', 'ميلك شيك', 70),
+('ميلك شيك نوتيلا', 'ميلك شيك', 80),
+('ميلك شيك فستق', 'ميلك شيك', 80),
+('ميلك شيك مانجو', 'ميلك شيك', 70),
+('ميلك شيك ماتشا', 'ميلك شيك', 80),
+('ميلك شيك كوكيز & كريم', 'ميلك شيك', 75),
+
+-- ايس تي
+('آيس تي (ليمون)', 'ايس تي', 45),
+('آيس تي (خوخ)', 'ايس تي', 45),
+('آيس تي (مانجو)', 'ايس تي', 50),
+('آيس تي (تفاح)', 'ايس تي', 50),
+('آيس تي (رمان)', 'ايس تي', 55),
+('آيس تي براعم النعناع', 'ايس تي', 55),
+
+-- مشروبات أخرى
+('بيبسي (330مل)', 'مشروبات أخرى', 30),
+('بيبسي (500مل)', 'مشروبات أخرى', 45),
+('ميرندا', 'مشروبات أخرى', 30),
+('سفن أب', 'مشروبات أخرى', 30),
+('سبرايت', 'مشروبات أخرى', 30),
+('ريد بول', 'مشروبات أخرى', 75),
+('مياه معدنية (صغير)', 'مشروبات أخرى', 15),
+('مياه معدنية (كبير)', 'مشروبات أخرى', 25),
+('مشروب لبن (عيران)', 'مشروبات أخرى', 30),
+('نسكافيه بارِد', 'مشروبات أخرى', 50),
+('سبلاش', 'مشروبات أخرى', 40),
+('مشروب طاقة طبيعي', 'مشروبات أخرى', 90);`;
+
+      const items = [];
+      sqlSeed.split("\n").forEach((line) => {
+        line = line.trim();
+        if (!line || line.startsWith("--") || line.startsWith("DELETE") || line.startsWith("INSERT")) return;
+        const match = line.match(/^\('(.+?)',\s*'(.+?)',\s*(\d+)\),?;?$/);
+        if (match) {
+          items.push({
+            name: match[1],
+            category: match[2],
+            price: Number(match[3])
+          });
+        }
+      });
+
+      localStorage.setItem(STORAGE_KEYS.MENU, JSON.stringify(items));
+      return items;
+    }
+
+    function loadOrders() {
+      const stored = localStorage.getItem(STORAGE_KEYS.ORDERS);
+      if (!stored) return [];
+      try {
+        return JSON.parse(stored);
+      } catch {
+        return [];
+      }
+    }
+
+    function saveOrders(orders) {
+      localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(orders));
+    }
+
+    let state = {
+      menu: [],
+      orders: [],
+      currentOrder: {
+        table: "",
+        notes: "",
+        items: [] // {name, price, qty}
+      }
+    };
+
+    function formatMoney(v) {
+      return Number(v || 0).toFixed(0);
+    }
+
+    function formatDateTime(iso) {
+      if (!iso) return "";
+      const d = new Date(iso);
+      const day = d.toLocaleDateString("ar-EG", { year: "2-digit", month: "2-digit", day: "2-digit" });
+      const time = d.toLocaleTimeString("ar-EG", { hour: "2-digit", minute: "2-digit" });
+      return `${day} - ${time}`;
+    }
+
+    function statusLabel(status) {
+      switch (status) {
+        case "pending": return "جديد";
+        case "in-progress": return "قيد التحضير";
+        case "done": return "جاهز";
+        default: return status || "";
+      }
+    }
+
+    function renderNav() {
+      const buttons = document.querySelectorAll("nav button[data-section]");
+      buttons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          const target = btn.getAttribute("data-section");
+          document.querySelectorAll(".section").forEach(sec => {
+            sec.classList.toggle("active", sec.id === target);
+          });
+          buttons.forEach(b => b.classList.toggle("active", b === btn));
+        });
+      });
+    }
+
+    function buildCategoryOptions(selectEl, menu) {
+      const cats = [...new Set(menu.map(i => i.category))].sort();
+      cats.forEach(cat => {
+        const opt = document.createElement("option");
+        opt.value = cat;
+        opt.textContent = cat;
+        selectEl.appendChild(opt);
+      });
+    }
+
+    // --- WAITER ---
+    function renderWaiterMenu() {
+      const container = document.getElementById("waiter-menu-list");
+      const catFilter = document.getElementById("waiter-category-filter").value;
+      const search = document.getElementById("waiter-search").value.trim();
+
+      const list = state.menu.filter(item => {
+        let ok = true;
+        if (catFilter && item.category !== catFilter) ok = false;
+        if (search && !item.name.includes(search)) ok = false;
+        return ok;
+      });
+
+      if (!list.length) {
+        container.innerHTML = '<div class="text-muted">لا يوجد أصناف مطابقة للبحث</div>';
+        return;
+      }
+
+      const groups = {};
+      list.forEach(item => {
+        if (!groups[item.category]) groups[item.category] = [];
+        groups[item.category].push(item);
+      });
+
+      let html = "";
+      Object.keys(groups).forEach(cat => {
+        html += `<div style="margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; gap:6px; flex-wrap:wrap;">
+            <div class="chip neutral">${cat}</div>
+            <span class="badge-pill">${groups[cat].length} صنف</span>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>الصنف</th>
+                <th>السعر</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>`;
+        groups[cat].forEach(item => {
+          html += `<tr>
+            <td>${item.name}</td>
+            <td>${formatMoney(item.price)} ج</td>
+            <td style="text-align:left;">
+              <button class="secondary small" onclick="addItemToCurrentOrder('${item.name.replace(/'/g, "\\'")}')">
+                إضافة
+              </button>
+            </td>
+          </tr>`;
+        });
+        html += `</tbody></table></div>`;
+      });
+
+      container.innerHTML = html;
+    }
+
+    window.addItemToCurrentOrder = function(name) {
+      const item = state.menu.find(i => i.name === name);
+      if (!item) return;
+      const existing = state.currentOrder.items.find(i => i.name === name);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        state.currentOrder.items.push({ name: item.name, price: item.price, qty: 1 });
+      }
+      renderCurrentOrder();
+    };
+
+    function renderCurrentOrder() {
+      const tbody = document.getElementById("current-order-items");
+      const countEl = document.getElementById("current-order-count");
+      const totalEl = document.getElementById("current-order-total");
+
+      if (!state.currentOrder.items.length) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;" class="text-muted">لا يوجد أصناف في الطلب بعد</td></tr>';
+        countEl.textContent = "0";
+        totalEl.textContent = "0";
+        return;
+      }
+
+      let html = "";
+      let total = 0;
+      let count = 0;
+
+      state.currentOrder.items.forEach((item, idx) => {
+        const rowTotal = item.price * item.qty;
+        total += rowTotal;
+        count += item.qty;
+        html += `<tr>
+          <td>${item.name}</td>
+          <td>${formatMoney(item.price)} ج</td>
+          <td>
+            <div style="display:flex; gap:4px; align-items:center; justify-content:flex-end;">
+              <button class="secondary small" onclick="changeQty(${idx}, -1)">-</button>
+              <span>${item.qty}</span>
+              <button class="secondary small" onclick="changeQty(${idx}, 1)">+</button>
+            </div>
+          </td>
+          <td>${formatMoney(rowTotal)} ج</td>
+          <td>
+            <button class="secondary small" onclick="removeItem(${idx})">حذف</button>
+          </td>
+        </tr>`;
+      });
+
+      tbody.innerHTML = html;
+      countEl.textContent = String(count);
+      totalEl.textContent = formatMoney(total);
+    }
+
+    window.changeQty = function(index, delta) {
+      const item = state.currentOrder.items[index];
+      if (!item) return;
+      item.qty += delta;
+      if (item.qty <= 0) {
+        state.currentOrder.items.splice(index, 1);
+      }
+      renderCurrentOrder();
+    };
+
+    window.removeItem = function(index) {
+      state.currentOrder.items.splice(index, 1);
+      renderCurrentOrder();
+    };
+
+    function clearCurrentOrder() {
+      state.currentOrder = { table: "", notes: "", items: [] };
+      document.getElementById("order-table").value = "";
+      document.getElementById("order-notes").value = "";
+      renderCurrentOrder();
+    }
+
+    function submitOrder() {
+      const table = document.getElementById("order-table").value.trim() || "بدون اسم";
+      const notes = document.getElementById("order-notes").value.trim();
+
+      if (!state.currentOrder.items.length) {
+        showToast("أضف أصناف للطلب أولاً");
+        return;
+      }
+
+      const total = state.currentOrder.items.reduce((s, i) => s + i.price * i.qty, 0);
+      const id = Date.now();
+      const nowIso = new Date().toISOString();
+
+      const newOrder = {
+        id,
+        table,
+        notes,
+        items: state.currentOrder.items,
+        total,
+        status: "pending",
+        paid: false,
+        createdAt: nowIso
+      };
+
+      state.orders.unshift(newOrder);
+      saveOrders(state.orders);
+      clearCurrentOrder();
+      renderOrdersOverview();
+      renderKitchenOrders();
+      renderCashier();
+      showToast("تم إرسال الطلب إلى المطبخ");
+    }
+
+    // --- ORDERS OVERVIEW ---
+    function renderOrdersOverview() {
+      const tbody = document.getElementById("orders-list");
+      const statusFilter = document.getElementById("orders-status-filter").value;
+      const search = document.getElementById("orders-search").value.trim();
+
+      let list = [...state.orders];
+
+      if (statusFilter === "paid") {
+        list = list.filter(o => o.paid);
+      } else if (statusFilter) {
+        list = list.filter(o => o.status === statusFilter);
+      }
+
+      if (search) {
+        const s = search.toLowerCase();
+        list = list.filter(o =>
+          String(o.id).includes(s) ||
+          (o.table && o.table.toLowerCase().includes(s))
+        );
+      }
+
+      if (!list.length) {
+        tbody.innerHTML = '<tr><td colspan="7" class="text-muted" style="text-align:center;">لا يوجد طلبات</td></tr>';
+        return;
+      }
+
+      let html = "";
+      list.forEach(o => {
+        const kitchenStatusClass =
+          o.status === "pending" ? "status-new" :
+          o.status === "in-progress" ? "status-progress" : "status-done";
+
+        const payClass = o.paid ? "status-paid" : "status-unpaid";
+        const payLabel = o.paid ? "مدفوع" : "غير مدفوع";
+
+        html += `<tr>
+          <td>#${o.id}</td>
+          <td>${o.table}</td>
+          <td>${o.items.reduce((c, i) => c + i.qty, 0)}</td>
+          <td>${formatMoney(o.total)} ج</td>
+          <td>
+            <span class="chip neutral">
+              <span class="status-dot ${kitchenStatusClass}"></span>
+              ${statusLabel(o.status)}
+            </span>
+          </td>
+          <td>
+            <span class="chip ${o.paid ? "success" : "danger"}">
+              <span class="status-dot ${payClass}"></span>
+              ${payLabel}
+            </span>
+          </td>
+          <td>${formatDateTime(o.createdAt)}</td>
+        </tr>`;
+      });
+
+      tbody.innerHTML = html;
+    }
+
+    // --- KITCHEN ---
+    function renderKitchenOrders() {
+      const tbody = document.getElementById("kitchen-orders-list");
+      const list = state.orders.filter(o => o.status === "pending" || o.status === "in-progress");
+
+      if (!list.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-muted" style="text-align:center;">لا يوجد طلبات في انتظار المطبخ</td></tr>';
+        return;
+      }
+
+      let html = "";
+      list.forEach(o => {
+        let btnLabel = "بدء التحضير";
+        if (o.status === "in-progress") btnLabel = "إنهاء / جاهز";
+
+        const statusClass =
+          o.status === "pending" ? "status-new" : "status-progress";
+
+        html += `<tr>
+          <td>#${o.id}</td>
+          <td>${o.table}</td>
+          <td>
+            ${o.items.map(i => `<div>${i.name} × ${i.qty}</div>`).join("")}
+          </td>
+          <td>${o.notes || "-"}</td>
+          <td>
+            <span class="chip neutral">
+              <span class="status-dot ${statusClass}"></span>
+              ${statusLabel(o.status)}
+            </span>
+          </td>
+          <td>
+            <button class="secondary small" onclick="kitchenAdvance(${o.id})">${btnLabel}</button>
+          </td>
+        </tr>`;
+      });
+
+      tbody.innerHTML = html;
+    }
+
+    window.kitchenAdvance = function(orderId) {
+      const order = state.orders.find(o => o.id === orderId);
+      if (!order) return;
+      if (order.status === "pending") order.status = "in-progress";
+      else if (order.status === "in-progress") order.status = "done";
+      saveOrders(state.orders);
+      renderKitchenOrders();
+      renderOrdersOverview();
+      renderCashier();
+    };
+
+    // --- CASHIER ---
+    function renderCashier() {
+      const tbody = document.getElementById("cashier-orders-list");
+      const filter = document.getElementById("cashier-filter").value;
+
+      let list = [...state.orders];
+
+      if (filter === "unpaid") list = list.filter(o => !o.paid);
+      else if (filter === "paid") list = list.filter(o => o.paid);
+
+      if (!list.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-muted" style="text-align:center;">لا يوجد طلبات</td></tr>';
+      } else {
+        let html = "";
+        list.forEach(o => {
+          const payClass = o.paid ? "status-paid" : "status-unpaid";
+          const payLabel = o.paid ? "مدفوع" : "غير مدفوع";
+          html += `<tr>
+            <td>#${o.id}</td>
+            <td>${o.table}</td>
+            <td>${formatMoney(o.total)} ج</td>
+            <td>
+              <span class="chip ${o.paid ? "success" : "danger"}">
+                <span class="status-dot ${payClass}"></span>
+                ${payLabel}
+              </span>
+            </td>
+            <td>${formatDateTime(o.createdAt)}</td>
+            <td>
+              <div style="display:flex; gap:4px; flex-wrap:wrap;">
+                ${
+                  o.paid
+                    ? '<span class="text-muted">تم السداد</span>'
+                    : `<button class="primary small" onclick="markPaid(${o.id})">تحصيل / تم الدفع</button>`
+                }
+                <button class="secondary small" onclick="printOrder(${o.id})">طباعة</button>
+              </div>
+            </td>
+          </tr>`;
+        });
+        tbody.innerHTML = html;
+      }
+
+      const totalPaid = state.orders
+        .filter(o => o.paid)
+        .reduce((s, o) => s + (o.total || 0), 0);
+      document.getElementById("cashier-total-paid").textContent = formatMoney(totalPaid);
+    }
+
+    window.markPaid = function(orderId) {
+      const order = state.orders.find(o => o.id === orderId);
+      if (!order) return;
+      order.paid = true;
+      saveOrders(state.orders);
+      renderCashier();
+      renderOrdersOverview();
+      showToast("تم تحصيل الفاتورة");
+    };
+
+    // === أمر الطباعة لكل طلب ===
+    window.printOrder = function(orderId) {
+      const order = state.orders.find(o => o.id === orderId);
+      if (!order) return;
+
+      const itemsRows = order.items.map(i => `
+        <tr>
+          <td>${i.name}</td>
+          <td>${i.qty}</td>
+          <td>${formatMoney(i.price)}</td>
+          <td>${formatMoney(i.price * i.qty)}</td>
+        </tr>
+      `).join("");
+
+      const paidText = order.paid ? "مدفوع" : "غير مدفوع";
+
+      const html = `
+        <!DOCTYPE html>
+        <html lang="ar" dir="rtl">
+        <head>
+          <meta charset="UTF-8" />
+          <title>فاتورة طلب #${order.id}</title>
+          <style>
+            body {
+              font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+              margin: 10px;
+              direction: rtl;
+            }
+            h2, h4 {
+              text-align: center;
+              margin: 4px 0;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              font-size: 12px;
+              margin-top: 8px;
+            }
+            th, td {
+              border: 1px solid #000;
+              padding: 3px;
+              text-align: right;
+            }
+            .meta {
+              font-size: 12px;
+              margin-top: 4px;
+            }
+            .meta div {
+              margin-bottom: 2px;
+            }
+            .total {
+              margin-top: 8px;
+              font-size: 13px;
+              font-weight: bold;
+              text-align: left;
+            }
+            @media print {
+              button {
+                display: none;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <h2>كاشير الكافيه</h2>
+          <h4>فاتورة طلب رقم #${order.id}</h4>
+
+          <div class="meta">
+            <div>الترابيزة / العميل: ${order.table}</div>
+            <div>الوقت: ${formatDateTime(order.createdAt)}</div>
+            <div>الحالة: ${statusLabel(order.status)} - ${paidText}</div>
+            ${order.notes ? `<div>ملاحظات: ${order.notes}</div>` : ""}
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>الصنف</th>
+                <th>الكمية</th>
+                <th>السعر</th>
+                <th>الإجمالي</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${itemsRows}
+            </tbody>
+          </table>
+
+          <div class="total">
+            الإجمالي الكلي: ${formatMoney(order.total)} ج
+          </div>
+
+          <div style="text-align:center; margin-top:10px;">
+            <button onclick="window.print()">طباعة</button>
+          </div>
+        </body>
+        </html>
+      `;
+
+      const printWindow = window.open("", "_blank", "width=400,height=600");
+      if (!printWindow) return;
+
+      printWindow.document.open();
+      printWindow.document.write(html);
+      printWindow.document.close();
+      printWindow.focus();
+    };
+
+    // --- MENU VIEW ---
+    function renderMenuView() {
+      const tbody = document.getElementById("menu-list");
+      const catFilter = document.getElementById("menu-category-filter").value;
+      const search = document.getElementById("menu-search").value.trim();
+
+      let list = [...state.menu];
+      if (catFilter) list = list.filter(i => i.category === catFilter);
+      if (search) list = list.filter(i => i.name.includes(search));
+
+      if (!list.length) {
+        tbody.innerHTML = '<tr><td colspan="3" class="text-muted" style="text-align:center;">لا يوجد أصناف</td></tr>';
+        return;
+      }
+
+      let html = "";
+      list.forEach(i => {
+        html += `<tr>
+          <td>${i.name}</td>
+          <td>${i.category}</td>
+          <td>${formatMoney(i.price)}</td>
+        </tr>`;
+      });
+      tbody.innerHTML = html;
+    }
+
+    function init() {
+      renderNav();
+      state.menu = seedMenuFromSqlIfNeeded();
+      state.orders = loadOrders();
+
+      buildCategoryOptions(document.getElementById("waiter-category-filter"), state.menu);
+      buildCategoryOptions(document.getElementById("menu-category-filter"), state.menu);
+
+      document.getElementById("waiter-category-filter").addEventListener("change", renderWaiterMenu);
+      document.getElementById("waiter-search").addEventListener("input", renderWaiterMenu);
+      document.getElementById("menu-category-filter").addEventListener("change", renderMenuView);
+      document.getElementById("menu-search").addEventListener("input", renderMenuView);
+
+      document.getElementById("clear-current-order").addEventListener("click", clearCurrentOrder);
+      document.getElementById("submit-order").addEventListener("click", submitOrder);
+
+      document.getElementById("orders-status-filter").addEventListener("change", renderOrdersOverview);
+      document.getElementById("orders-search").addEventListener("input", renderOrdersOverview);
+
+      document.getElementById("cashier-filter").addEventListener("change", renderCashier);
+
+      renderWaiterMenu();
+      renderCurrentOrder();
+      renderOrdersOverview();
+      renderKitchenOrders();
+      renderCashier();
+      renderMenuView();
+    }
+
+    document.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>
+
 
